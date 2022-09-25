@@ -1,6 +1,6 @@
 import pygame
 pygame.init()  
-pygame.display.set_caption("sound!")  # sets the window title
+pygame.display.set_caption("images and sound!")  # sets the window title
 screen = pygame.display.set_mode((800, 800))  # creates game screen
 screen.fill((0,0,0))
 clock = pygame.time.Clock() #set up clock
@@ -12,8 +12,8 @@ RIGHT=1
 UP = 2
 DOWN = 3
 
-#DRAW A TREE
-image = pygame.image.load("tree2.png")
+#load images
+image = pygame.image.load("space.png")
 
 #player variables
 xpos = 500 #xpos of player
@@ -23,11 +23,11 @@ vy = 0 #y velocity of player
 keys = [False, False, False, False] #this list holds whether each key has been pressed
 isOnGround = False #this variable stops gravity from pulling you down more when on a platform
 
-#SOUND
-jump = pygame.mixer.Sound('jump.wav')
-music = pygame.mixer.music.load('music.wav')
-pygame.mixer.music.play(-1)
-
+#SOUND--------------------------------------------------------------------
+jump = pygame.mixer.Sound('jump.ogg')#load in sound effect
+music = pygame.mixer.music.load('music.ogg')#load in background music
+pygame.mixer.music.play(-1)#start background music
+#-------------------------------------------------------------------------
 
 while not gameover: #GAME LOOP############################################################
     clock.tick(60) #FPS
@@ -103,9 +103,9 @@ while not gameover: #GAME LOOP##################################################
             
     screen.fill((255,255,255)) #wipe screen so it doesn't smear
   
-    screen.blit(image, (500, 500))
+    screen.blit(image, (0,0)) #draw background image
   
-    pygame.draw.rect(screen, (100, 200, 100), (xpos, ypos, 20, 40))
+    pygame.draw.rect(screen, (100, 200, 100), (xpos, ypos, 20, 40)) #draw player
     
     #first platform
     pygame.draw.rect(screen, (200, 0, 100), (100, 750, 100, 20))
@@ -115,7 +115,7 @@ while not gameover: #GAME LOOP##################################################
     
     
     
-    pygame.display.flip()#this actually puts the pixel on the screen
+    pygame.display.flip()#this flips the buffer (memory) where stuff has been "drawn" to the actual screen
     
 #end game loop------------------------------------------------------------------------------
 pygame.quit()
