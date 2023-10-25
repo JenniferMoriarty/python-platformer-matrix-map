@@ -1,3 +1,7 @@
+#basic matrix-based platformer with scrolling using an offset variable
+#note: A BETTER WAY TO DO THIS ON A BIG GAME IS WITH A CAMERA OBJECT
+#but this is a good place to start if this is your first scrolling game...
+
 import pygame
 pygame.init()  
 pygame.display.set_caption("sprite sheet")  # sets the window title
@@ -190,5 +194,3 @@ while not gameover:
     
 #end game loop------------------------------------------------------------------------------
 pygame.quit()
-
-
