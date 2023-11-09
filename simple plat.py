@@ -1,89 +1,119 @@
 import pygame
 pygame.init()  
-pygame.display.set_caption("sprite sheet")  # sets the window title
+pygame.display.set_caption("easy platformer")  # sets the window title
 screen = pygame.display.set_mode((800, 800))  # creates game screen
 screen.fill((0,0,0))
 clock = pygame.time.Clock() #set up clock
 gameover = False #variable to run our game loop
 
-Link = pygame.image.load("link.png") #load your spritesheet
-Link.set_colorkey((255, 0, 255)) #this makes bright pink (255, 0, 255) transparent (sort of)
+#CONSTANTS
+LEFT=0
+RIGHT=1
+UP = 2
+DOWN = 3
+
 
 #player variables
 xpos = 500 #xpos of player
-ypos = 500-232 #ypos of player
+ypos = 200 #ypos of player
 vx = 0 #x velocity of player
+vy = 0 #y velocity of player
 keys = [False, False, False, False] #this list holds whether each key has been pressed
+isOnGround = False #this variable stops gravity from pulling you down more when on a platform
 
-LEFT=0
-RIGHT = 1
 
-#animation variables variables
-frameWidth = 160
-frameHeight = 212
-RowNum = 0 #for left animation, this will need to change for other animations
-frameNum = 0
-ticker = 0
-
-while not gameover:
+while not gameover: #GAME LOOP############################################################
     clock.tick(60) #FPS
     
+    #Input Section------------------------------------------------------------
     for event in pygame.event.get(): #quit game if x is pressed in top corner
         if event.type == pygame.QUIT:
             gameover = True
+            
+        
       
-        if event.type == pygame.KEYDOWN: #keyboard input
+        if event.type == pygame.KEYDOWN: #looks for key presses
             if event.key == pygame.K_LEFT:
-                keys[0]=True
-            elif event.key == pygame.K_RIGHT:
-                keys[1]=True
-        elif event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT:
-                keys[0]=False
-            elif event.key == pygame.K_RIGHT:
-                keys[1]=False
-          
+                keys[LEFT]=True
+                  
 
+         
+            if event.key == pygame.K_UP:
+                keys[UP]=True
+      
+                
+
+        elif event.type == pygame.KEYUP: #looks for key releases
+            if event.key == pygame.K_LEFT:
+                keys[LEFT]=False
+
+            elif event.key == pygame.K_UP:
+                keys[UP]=False
+
+    #physics section--------------------------------------------------------------------
     #LEFT MOVEMENT
-    if keys[0]==True:
+    if keys[LEFT]==True:
         vx=-3
-        direction = 0
-    #RIGHT MOVEMENT
-    elif keys[1] == True:
-        vx = 3
-    #turn off velocity
+   
+        
+
     else:
         vx = 0
+        #JUMPING
+    if keys[UP] == True and isOnGround == True: #only jump when on the ground
+        vy = -8
+        isOnGround = False
+        direction = UP
+
+
+    
+    #COLLISION
+    if xpos>100 and xpos<200 and ypos+40 >750 and ypos+40 <770:
+        ypos = 750-40
+        isOnGround = True
+        vy = 0
+    elif xpos>200 and xpos<300 and ypos+40 >650 and ypos+40 <670:
+        ypos = 650-40
+        isOnGround = True
+        vy = 0
+
+    else:
+        isOnGround = False
+
+
+    
+    #stop falling if on bottom of game screen
+    if ypos > 760:
+        isOnGround = True
+        vy = 0
+        ypos = 760
         
-    #UPDATE POSITION BASED ON VELOCITY
-        
-    xpos+=vx #update player xpos
-        
-    #ANIMATION-------------------------------------------------------------------
-        
-    # Update Animation Information
-    # Only animate when in motion
-    if vx>0:
-        RowNum = 1
-    if vx < 0: #left animation
-        RowNum = 0
-        # Ticker is a spedometer. We don't want Link animating as fast as the
-        # processor can process! Update Animation Frame each time ticker goes over
-        ticker+=1
-        if ticker%10==0: #only change frames every 10 ticks
-          frameNum+=1
-           #If we are over the number of frames in our sprite, reset to 0.
-           #In this particular case, there are 10 frames (0 through 9)
-        if frameNum>2: 
-           frameNum = 0
+
+    
+    #gravity
+    if isOnGround == False:
+        vy+=.2 #notice this grows over time, aka ACCELERATION
+
+
+    #update player position
+    xpos+=vx 
+    ypos+=vy
+
+ 
   
-    # RENDER--------------------------------------------------------------------------------
-    # Once we've figured out what frame we're on and where we are, time to render.
+    # RENDER Section----------------------------------
             
     screen.fill((0,0,0)) #wipe screen so it doesn't smear
-    screen.blit(Link, (xpos, ypos), (frameWidth*frameNum, RowNum*frameHeight, frameWidth, frameHeight))
     
+    #player
+    pygame.draw.rect(screen, (200, 0, 10), (xpos, ypos, 20,40))
+    
+    #platforms
+    pygame.draw.rect(screen, (200, 0, 10), (100, 750, 100, 20))
+    pygame.draw.rect(screen, (200, 0, 20), (200, 650, 100, 20))
+ 
     pygame.display.flip()#this actually puts the pixel on the screen
     
 #end game loop------------------------------------------------------------------------------
+
 pygame.quit()
